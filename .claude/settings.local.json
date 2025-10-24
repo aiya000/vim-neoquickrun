@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//home/vscode/vket-boilerplate-nuxt/**)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
