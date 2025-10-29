@@ -5,46 +5,58 @@ A successor to vim-quickrun, reimplemented with TypeScript and denops.vim.
 ==================
 ## Authors of original vim-quickrun
 
+vim-quickrun (original):
+https://github.com/thinca/vim-quickrun
+
 Author:
-    - thinca <thinca+vim@gmail.com>
+    - thinca <thinca+vim at gmail.com>
 Documentation:
-    - thinca <thinca+vim@gmail.com>
+    - thinca <thinca+vim at gmail.com>
     - ujihisa <ujihisa at gmail com>
-    - tyru <tyru.exe@gmail.com>
+    - tyru <tyru.exe at gmail.com>
 
 License: zlib License
 
 ==================
 ## Author of vim-neoquickrun
 
-- aiya000 <aiya000.develop@gmail.com>
+vim-neoquickrun (this plugin):
+https://github.com/aiya000/vim-neoquickrun
+
+- aiya000 <aiya000.develop at gmail.com>
 
 License: zlib License
 
 ==================
-## CONTENTS *neoquickrun-contents*
+## Contents *neoquickrun-contents*
 
 - Introduction |neoquickrun-introduction|
+- Quick Examples |neoquickrun-quick-examples|
+- Configurations |neoquickrun-configurations|
+    - Vim Configurations |neoquickrun-vim-configurations|
+    - Neovim Configurations |neoquickrun-neovim-configurations|
 - Requirements |neoquickrun-requirements|
-- Interface |neoquickrun-interface|
-    - Commands |neoquickrun-commands|
-    - Functions |neoquickrun-functions|
-    - Key Mappings |neoquickrun-key-mappings|
+- Commands |neoquickrun-commands|
+- Functions |neoquickrun-functions|
+- Key Mappings |neoquickrun-key-mappings|
 - Options |neoquickrun-options|
-    - Option Syntax |neoquickrun-syntax-option|
-    - Format of Exec |neoquickrun-exec-format|
+- Option Syntax |neoquickrun-option-syntax|
+- Exec Format |neoquickrun-exec-option-format|
 - Settings |neoquickrun-settings|
+    - Settings Priority |neoquickrun-settings-priority|
 - Module |neoquickrun-module|
+    - Module-Specific Options |neoquickrun-module-specific-options|
+    - Postfix Syntax |neoquickrun-module-postfix-syntax|
     - Runner |neoquickrun-module-runner|
     - Outputter |neoquickrun-module-outputter|
     - Hook |neoquickrun-module-hook|
 - Hook |neoquickrun-hook|
     - Hook Points |neoquickrun-hook-points|
-- Setting Examples |neoquickrun-examples|
+- Setting Examples |neoquickrun-setting-examples|
 - Changelog |neoquickrun-changelog|
 
 ==================
-## INTRODUCTION *neoquickrun-introduction*
+## Introduction *neoquickrun-introduction*
 
 *neoquickrun* is a Vim plugin to execute whole/part of editing file quickly.
 
@@ -59,9 +71,11 @@ https://github.com/thinca/vim-quickrun
 vim-neoquickrun repository:
 https://github.com/aiya000/vim-neoquickrun
 
-------------
-### Synopsis *neoquickrun-synopsis*
+==================
+## Quick Examples *neoquickrun-quick-examples*
 
+------------
+### Command Examples
 >vim
   " Execute current buffer.
   :NeoQuickRun
@@ -75,17 +89,128 @@ https://github.com/aiya000/vim-neoquickrun
   " Execute one-liner program given from command-line.
   :NeoQuickRun ruby -src 'puts "Hello, world!"'
 
-  " (In .vimrc) Set default program to execute haskell program to hugs.
-  let g:neoquickrun_config = {}
-  let g:neoquickrun_config.haskell = {'command' : 'runhugs'}
+------------
+### Configuration Examples
+
+---------------
+#### For Vim (in .vimrc)
+>vim
+  " Set default program to execute haskell program to hugs
+  let g:neoquickrun_config = {
+    \ 'haskell': {
+      \ 'command': 'runhugs'
+    \ },
+  \ }
 
   " Set shortcut keys.
   nmap <Leader>r <Plug>(neoquickrun)
   vmap <Leader>r <Plug>(neoquickrun)
 <
+---------------
+#### For Neovim (in init.lua)
+>lua
+  -- Set default program to execute haskell program to hugs
+  vim.g.neoquickrun_config = {
+    haskell = {
+      command = 'runhugs'
+    },
+  }
+
+  -- Set shortcut keys.
+  vim.keymap.set('n', '<Leader>r', '<Plug>(neoquickrun)')
+  vim.keymap.set('v', '<Leader>r', '<Plug>(neoquickrun)')
+<
+==================
+## Configurations *neoquickrun-configurations*
+
+------------
+### Vim Configurations *neoquickrun-vim-configurations*
+
+Default configuration values for |g:neoquickrun_config|.
+
+You can override these defaults in your .vimrc:
+>vim
+  let g:neoquickrun_config = {
+    \ '_': {
+      \ 'runner': 'job',
+      \ 'outputter': 'buffer',
+      \ 'exec': '%c %o %s %a',
+      \ 'tempfile': '%{tempname()}',
+      \ 'mode': 'n',
+    \ },
+  \ }
+<
+`'_'` meaning default for all filetypes.
+Configuration for Specific Filetypes:
+>vim
+  let g:neoquickrun_config = {
+    \ 'python': {
+      \ 'command': 'python3',
+      \ 'exec': '%c %o %s %a',
+    \ },
+    \ 'javascript': {
+      \ 'command': 'node',
+    \ },
+    \ 'cpp': {
+      \ 'command': 'g++',
+      \ 'exec': ['%c %o -o %s:r %s', '%s:r %a'],
+    \ },
+  \ }
+<
+Available Configuration Options:
+
+- `type` - Template name (default: current 'filetype')
+- `exec` - Command execution format (default: `'%c %o %s %a'`)
+- `command` - Program command (default: same as type)
+- `cmdopt` - Command-line options (default: `''`)
+- `srcfile` - Source file path (default: temp file)
+- `src` - Source code (default: buffer content)
+- `args` - Program arguments (default: `''`)
+- `runner` - Execution runner (default: `'job'`)
+- `outputter` - Output destination (default: `'buffer'`)
+- `hooks` - List of hook modules (default: `[]`)
+- `mode` - Execution mode: 'n', 'v', or 'o' (default: auto-detect)
+- `tempfile` - Temporary file template (default: `'%{tempname()}'`)
+
+See |neoquickrun-options| for detailed option descriptions.
+
+------------
+### Neovim Configurations *neoquickrun-neovim-configurations*
+
+For Neovim users, you can configure vim-neoquickrun using Lua:
+>lua
+  vim.g.neoquickrun_config = {
+    _ = {
+      runner = 'job',
+      outputter = 'buffer',
+      exec = '%c %o %s %a',
+      tempfile = '%{tempname()}',
+      mode = 'n',
+    },
+    python = {
+      command = 'python3',
+      exec = '%c %o %s %a',
+    },
+    javascript = {
+      command = 'node',
+    },
+    cpp = {
+      command = 'g++',
+      exec = { '%c %o -o %s:r %s', '%s:r %a' },
+    },
+  }
+<
+Buffer-Local Configuration:
+>lua
+  vim.b.neoquickrun_config = {
+    runner = 'terminal',
+    outputter = 'quickfix',
+  }
+<
+For available configuration options, see |neoquickrun-vim-configurations|.
 
 ==================
-## REQUIREMENTS *neoquickrun-requirements*
+## Requirements *neoquickrun-requirements*
 
 - *Vim*: 8.1 or later
 - *Neovim*: 0.5 or later
@@ -93,10 +218,7 @@ https://github.com/aiya000/vim-neoquickrun
 - *denops.vim*: https://github.com/vim-denops/denops.vim
 
 ==================
-## INTERFACE *neoquickrun-interface*
-
-------------
-### COMMANDS *neoquickrun-commands*
+## Commands *neoquickrun-commands*
 
 - *:NeoQuickRun*
 
@@ -121,18 +243,19 @@ If value contains whitespaces, you must quote with single or double quotes.
 |:NeoQuickRun| can take |:range|.
 If it was not given, |:NeoQuickRun| treats whole lines.
 
-------------
-### FUNCTIONS *neoquickrun-functions*
+==================
+## Functions *neoquickrun-functions*
 
-- *neoquickrun#run()*
+------------
+### *neoquickrun#run()*
 
 neoquickrun#run({args}, {count}, {line1}, {line2})
 
 A function version of |:NeoQuickRun|.
 Called internally by the |:NeoQuickRun| command.
 
-
-- *neoquickrun#operator()*
+------------
+### *neoquickrun#operator()*
 
 neoquickrun#operator({type})
 
@@ -144,24 +267,25 @@ Example:
 <
 This runs current paragraph (|ip|) with <C-CR>.
 
-
-- *neoquickrun#complete()*
+------------
+### *neoquickrun#complete()*
 
 neoquickrun#complete({arglead}, {cmdline}, {cursorpos})
 
 Command completion function for |:NeoQuickRun|.
 Provides completion for option names.
 
-------------
-### KEY MAPPINGS *neoquickrun-key-mappings*
+==================
+## Key Mappings *neoquickrun-key-mappings*
 
-- *<Plug>(neoquickrun-op)*
+------------
+### *<Plug>(neoquickrun-op)*
 
 Execute next motion's range.
 This sets 'operatorfunc' to "neoquickrun#operator".
 
-
-- *<Plug>(neoquickrun)*
+------------
+### *<Plug>(neoquickrun)*
 
 Execute and display the result for current buffer.
 This is normally same as |:NeoQuickRun| without arguments.
@@ -172,133 +296,105 @@ Example:
   vmap <Leader>r <Plug>(neoquickrun)
   nmap <Leader>o <Plug>(neoquickrun-op)
 <
-
 ==================
-## OPTIONS *neoquickrun-options*
+## Options *neoquickrun-options*
 
 Here are the list of options you can specify at command-line.
 |g:neoquickrun_config| is used for options which are not specified.
 
-
-- *neoquickrun-option-type*
-
+------------
+### *neoquickrun-option-type*
 >vim
   :NeoQuickRun -type {filetype}
 <
-
 Template for current setting.
 Default value is current 'filetype'.
 See |g:neoquickrun_config| for more details.
 
-
-- *neoquickrun-option-exec*
-
+------------
+### *neoquickrun-option-exec*
 >vim
   :NeoQuickRun -exec '%c %o %s %a'
 <
-
 Format of executed commands.
 You can specify multiple values as a list.
 See |neoquickrun-exec-format| for format details.
 
 Default: `'%c %o %s %a'`
 
-
-- *neoquickrun-option-command*
-
+------------
+### *neoquickrun-option-command*
 >vim
   :NeoQuickRun -command {command}
 <
-
 String expanded to %c in exec.
 If not specified, same value as type is used.
 
 Example:
-```vim
-" Use 'python3' instead of 'python'
-:NeoQuickRun -type python -command python3
-```
-
-
-- *neoquickrun-option-cmdopt*
-
+>vim
+  " Use 'python3' instead of 'python'
+  :NeoQuickRun -type python -command python3
+<
+------------
+### *neoquickrun-option-cmdopt*
 >vim
   :NeoQuickRun -cmdopt {cmdopt}
 <
-
 String expanded to %o in exec.
 Options to pass to the command.
 
 Example:
-```vim
-" Pass optimization flag to gcc
-:NeoQuickRun -type c -cmdopt '-O2 -Wall'
-```
-
+>vim
+  " Pass optimization flag to gcc
+  :NeoQuickRun -type c -cmdopt '-O2 -Wall'
+<
 Default: `''`
 
-
-- *neoquickrun-option-srcfile*
-
+------------
+### *neoquickrun-option-srcfile*
 >vim
   :NeoQuickRun -srcfile {file}
 <
-
 Source file of program. If this is specified, "src" is not used.
 
 Example:
-```vim
-" Run a specific file instead of current buffer
-:NeoQuickRun -type python -srcfile /path/to/script.py
-```
-
-
-*neoquickrun-option-src*
-
-- *neoquickrun-option-src*
-
+>vim
+  " Run a specific file instead of current buffer
+  :NeoQuickRun -type python -srcfile /path/to/script.py
+<
+------------
+### *neoquickrun-option-src*
 >vim
   :NeoQuickRun -src {source}
 <
-
 Executed program source code.
 Default value is whole lines of editing file.
 
 Example:
-```vim
-" Run specific code directly
-:NeoQuickRun -type python -src 'print("Hello, World!")'
-```
-
-
-*neoquickrun-option-args*
-
-- *neoquickrun-option-args*
-
+>vim
+  " Run specific code directly
+  :NeoQuickRun -type python -src 'print("Hello, World!")'
+<
+------------
+### *neoquickrun-option-args*
 >vim
   :NeoQuickRun -args {arguments}
 <
-
 String expanded to %a in exec.
 Arguments to pass to the program.
 
 Example:
-```vim
-" Pass arguments to the program
-:NeoQuickRun -type python -args '--version'
-```
-
+>vim
+  " Pass arguments to the program
+  :NeoQuickRun -type python -args '--version'
+<
 Default: `''`
 
-
-*neoquickrun-option-input*
-
-- *neoquickrun-option-input*
-
+------------
+### *neoquickrun-option-input*
 >vim
   :NeoQuickRun <{input}
 <
-
 Specifies stdin of the program.
 This option uses shell-like redirection syntax with `<`.
 
@@ -308,110 +404,90 @@ Syntax:
 - `<@{register}` - Use register content
 
 Example:
-```vim
-" Use file as stdin
-:NeoQuickRun </path/to/input.txt
+>vim
+  " Use file as stdin
+  :NeoQuickRun </path/to/input.txt
 
-" Use string as stdin
-:NeoQuickRun <=Hello\nWorld
+  " Use string as stdin
+  :NeoQuickRun <=Hello\nWorld
 
-" Use register content as stdin
-:NeoQuickRun <@a
-```
-
+  " Use register content as stdin
+  :NeoQuickRun <@a
+<
 Note: You can also use `-input` option for programmatic usage:
-```vim
-:NeoQuickRun -input /path/to/input.txt
-:NeoQuickRun -input '=Hello\nWorld'
-:NeoQuickRun -input @a
-```
-
-*neoquickrun-option-outputter*
-
-- *neoquickrun-option-outputter*
-
+>vim
+  :NeoQuickRun -input /path/to/input.txt
+  :NeoQuickRun -input '=Hello\nWorld'
+  :NeoQuickRun -input @a
+<
+------------
+### Option Outputter *neoquickrun-option-outputter*
 >vim
   :NeoQuickRun >{outputter}
   :NeoQuickRun >>{outputter}
 <
-
 Specifies an outputter.
 This option uses shell-like redirection syntax with `>` or `>>`.
 Use `>>` to append to existing output.
 See |neoquickrun-module-outputter| for details.
 
 Example:
-```vim
-" Output to quickfix
-:NeoQuickRun >quickfix
+>vim
+  " Output to quickfix
+  :NeoQuickRun >quickfix
 
-" Output to multiple destinations
-:NeoQuickRun >buffer:message
+  " Output to multiple destinations
+  :NeoQuickRun >buffer:message
 
-" Append to buffer
-:NeoQuickRun >>buffer
-```
-
+  " Append to buffer
+  :NeoQuickRun >>buffer
+<
 Note: You can also use `-outputter` option for programmatic usage:
-```vim
-:NeoQuickRun -outputter quickfix
-:NeoQuickRun -outputter 'buffer:message'
-```
-
+>vim
+  :NeoQuickRun -outputter quickfix
+  :NeoQuickRun -outputter 'buffer:message'
+<
 Default: `'buffer'`
 
-
-*neoquickrun-option-runner*
-
-- *neoquickrun-option-runner*
-
+------------
+### *neoquickrun-option-runner*
 >vim
   :NeoQuickRun -runner {runner}
 <
-
 Specifies a runner.
 See |neoquickrun-module-runner| for details.
 
 Example:
-```vim
-" Use terminal runner
-:NeoQuickRun -runner terminal
+>vim
+  " Use terminal runner
+  :NeoQuickRun -runner terminal
 
-" Use system runner
-:NeoQuickRun -runner system
-```
-
+  " Use system runner
+  :NeoQuickRun -runner system
+<
 Default: `'job'`
 
-
-*neoquickrun-option-hooks*
-
-- *neoquickrun-option-hooks*
-
+------------
+### *neoquickrun-option-hooks*
 >vim
   :NeoQuickRun -hooks {hook1,hook2,...}
 <
-
 Specifies hooks as a list.
 See |neoquickrun-module-hook| for details.
 
 Example:
-```vim
-" Use time hook to measure execution time
-:NeoQuickRun -hooks time
+>vim
+  " Use time hook to measure execution time
+  :NeoQuickRun -hooks time
 
-" Use multiple hooks
-:NeoQuickRun -hooks 'time,shebang'
-```
-
-*neoquickrun-option-mode*
-
-- *neoquickrun-option-mode*
-
+  " Use multiple hooks
+  :NeoQuickRun -hooks 'time,shebang'
+<
+------------
+### *neoquickrun-option-mode*
 >vim
   :NeoQuickRun -mode {mode}
 <
-
 This value is one of "n", "v", "o".
 This changes behavior of getting the range text.
 Normally this is automatically set by neoquickrun.
@@ -419,37 +495,32 @@ But you need to care this value when you invoke |:NeoQuickRun|
 from your own key mappings.
 
 Example:
-```vim
-nnoremap <silent> <F5> :NeoQuickRun -mode n<CR>
-vnoremap <silent> <F5> :NeoQuickRun -mode v<CR>
-```
-
-
-*neoquickrun-option-tempfile*
-
-- *neoquickrun-option-tempfile*
-
+>vim
+  nnoremap <silent> <F5> :NeoQuickRun -mode n<CR>
+  vnoremap <silent> <F5> :NeoQuickRun -mode v<CR>
+<
+------------
+### *neoquickrun-option-tempfile*
 >vim
   :NeoQuickRun -tempfile {template}
 <
-
 Template for temporary filename.
 Temporary file will be removed after execution.
 You can use Vim expressions with %{expr} syntax.
 
 Example:
-```vim
-" Use custom temp directory
-:NeoQuickRun -tempfile '%{$HOME}/.cache/neoquickrun/temp.txt'
+>vim
+  " Use custom temp directory
+  :NeoQuickRun -tempfile '%{$HOME}/.cache/neoquickrun/temp.txt'
 
-" Use unique temp file
-:NeoQuickRun -tempfile '%{tempname()}'
-```
+  " Use unique temp file
+  :NeoQuickRun -tempfile '%{tempname()}'
+<
 
 Default: `'%{tempname()}'`
 
-------------------------------------------------------------------------------
-### OPTION SYNTAX *neoquickrun-syntax-option*
+==================
+## Option Syntax *neoquickrun-option-syntax*
 
 Specific options have special syntax for value expansion:
 
@@ -465,15 +536,14 @@ If evaluation fails, it is replaced by empty string.
 To avoid evaluation, escape with backslash (`\`).
 
 Example:
-```vim
-:NeoQuickRun -args @a
-:NeoQuickRun -args &{fileencoding}
-:NeoQuickRun -args $PATH
-:NeoQuickRun -tempfile %{tempname()}
-```
-
-------------------------------------------------------------------------------
-### FORMAT OF EXEC *neoquickrun-exec-format*
+>vim
+  :NeoQuickRun -args @a
+  :NeoQuickRun -args &{fileencoding}
+  :NeoQuickRun -args $PATH
+  :NeoQuickRun -tempfile %{tempname()}
+<
+==================
+## Exec Option Format *neoquickrun-exec-option-format*
 
 The exec option specifies the format of executed commands.
 You can use the following placeholders:
@@ -491,11 +561,10 @@ You can use the following placeholders:
 Use capital letters (%C, %S) to avoid escaping.
 
 You can use |filename-modifiers| for the symbols:
-```vim
-java %S:r:gs?[/\\]?.?
-```
-
-### Multiple Commands
+>vim
+  java %S:r:gs?[/\\]?.?
+<
+You can also use multiple commands.
 
 If you specify multiple exec options to |:NeoQuickRun|,
 or specify a list to exec in |g:neoquickrun_config|,
@@ -504,14 +573,13 @@ neoquickrun executes them in order.
 This is useful for compile, run, and cleanup operations.
 
 Example:
-```vim
-let g:neoquickrun_config.cpp = {
-\   'exec': ['%c %o -o %s:r %s', '%s:r %a']
-\ }
-```
-
+>vim
+  let g:neoquickrun_config.cpp = {
+    \ 'exec': ['%c %o -o %s:r %s', '%s:r %a']
+  \ }
+<
 ==================
-## SETTINGS *neoquickrun-settings*
+## Settings *neoquickrun-settings*
 
 *g:neoquickrun_config*
 
@@ -523,14 +591,15 @@ This is a dictionary where:
 
 Special {type} `'_'` provides default values for all types.
 
-### Configuration Priority
+------------
+### Settings Priority *neoquickrun-settings-priority*
 
 Options are resolved with the following priority (highest first):
 
 1. Command-line options
-2. Buffer-local config (|b:neoquickrun_config|)
-3. Type-specific config (|g:neoquickrun_config|.{type})
-4. Default type config (|g:neoquickrun_config|._)
+2. Buffer-local config (`b:neoquickrun_config`)
+3. Type-specific config (`g:neoquickrun_config.{type}`)
+4. Default type config (`g:neoquickrun_config._`)
 5. Built-in defaults
 
 *b:neoquickrun_config*
@@ -540,31 +609,30 @@ Specify a config dictionary (not nested by type).
 Has higher priority than |g:neoquickrun_config|.
 
 Example:
-```vim
-let g:neoquickrun_config = {
-\   '_': {
-\     'runner': 'job',
-\     'outputter': 'buffer',
-\   },
-\   'python': {
-\     'command': 'python3',
-\     'cmdopt': '-u',
-\   },
-\   'cpp': {
-\     'command': 'g++',
-\     'exec': ['%c %o -o %s:r %s', '%s:r %a'],
-\   }
-\ }
+>vim
+  let g:neoquickrun_config = {
+    \ '_': {
+      \ 'runner': 'job',
+      \ 'outputter': 'buffer',
+    \ },
+    \ 'python': {
+      \ 'command': 'python3',
+      \ 'cmdopt': '-u',
+    \ },
+    \ 'cpp': {
+      \ 'command': 'g++',
+      \ 'exec': ['%c %o -o %s:r %s', '%s:r %a'],
+    \ }
+  \ }
 
-" Buffer-local config
-let b:neoquickrun_config = {
-\   'runner': 'terminal',
-\   'outputter': 'quickfix',
-\ }
-```
-
+  " Buffer-local config
+  let b:neoquickrun_config = {
+    \ 'runner': 'terminal',
+    \ 'outputter': 'quickfix',
+  \ }
+<
 ==================
-## MODULE *neoquickrun-module*
+## Module *neoquickrun-module*
 
 neoquickrun is structured modularly with three types of modules:
 
@@ -572,7 +640,8 @@ neoquickrun is structured modularly with three types of modules:
 - outputter (|neoquickrun-module-outputter|)
 - hook (|neoquickrun-module-hook|)
 
-### Module-Specific Options
+------------
+### Module-Specific Options *neoquickrun-module-specific-options*
 
 You can specify module-specific options with the following priority:
 
@@ -582,49 +651,43 @@ You can specify module-specific options with the following priority:
 4. `"{option-name}"`
 
 Example:
-```vim
-let b:neoquickrun_config = {'outputter/buffer/append': 1}
-```
-
+>vim
+  let b:neoquickrun_config = {'outputter/buffer/append': 1}
+<
 Or:
-```vim
-:NeoQuickRun -outputter/buffer/append 1
-```
-
+>vim
+  :NeoQuickRun -outputter/buffer/append 1
+<
 Or:
-```vim
-:NeoQuickRun -append 1
-```
-
-### Postfix Syntax
+>vim
+  :NeoQuickRun -append 1
+<
+------------
+### Postfix Syntax *neoquickrun-module-postfix-syntax*
 
 You can give options when specifying a module:
-```vim
-:NeoQuickRun -outputter buffer:append=1:into=1
-```
-
-------------------------------------------------------------------------------
-### RUNNER *neoquickrun-module-runner*
+>vim
+  :NeoQuickRun -outputter buffer:append=1:into=1
+<
+------------
+### Runner *neoquickrun-module-runner*
 
 Runner is a module to execute programs.
 The following runners are available:
 
-*neoquickrun-module-runner/system*
-
-**runner/system**
+---------------
+#### runner/system *neoquickrun-module-runner/system*
 
 Runs by Deno's subprocess API synchronously.
 
-*neoquickrun-module-runner/job*
-
-**runner/job**
+---------------
+#### runner/job *neoquickrun-module-runner/job*
 
 Runs via Vim/Neovim's |job| feature asynchronously.
 This is the default runner.
 
-*neoquickrun-module-runner/terminal*
-
-**runner/terminal**
+---------------
+#### runner/terminal *neoquickrun-module-runner/terminal*
 
 Runs commands in terminal window via |terminal| feature.
 
@@ -632,9 +695,8 @@ Options:
 - `runner/terminal/opener` - Ex command to open terminal (default: `"new"`)
 - `runner/terminal/into` - Move cursor to terminal window (default: `0`)
 
-*neoquickrun-module-runner/shell*
-
-**runner/shell**
+---------------
+#### runner/shell *neoquickrun-module-runner/shell*
 
 Runs by |:!| command. Ignores given outputter.
 
@@ -643,9 +705,8 @@ Options:
     - Default: `'silent !"%s" & pause'` (Windows)
     - Default: `'!%s'` (Unix)
 
-*neoquickrun-module-runner/remote*
-
-**runner/remote**
+---------------
+#### runner/remote *neoquickrun-module-runner/remote*
 
 Runs in background and fetches result by |+clientserver| feature.
 Requires |v:servername| to be set.
@@ -653,24 +714,22 @@ Requires |v:servername| to be set.
 Options:
 - `runner/remote/vimproc` - (Deprecated, not available)
 
-*neoquickrun-module-runner/vimscript*
-
-**runner/vimscript**
+---------------
+#### runner/vimscript *neoquickrun-module-runner/vimscript*
 
 Runs commands as Vim commands.
 Gets output by |:redir| command.
 
 Note: Commands containing |:redir| cannot run (|:redir| cannot nest).
 
-------------------------------------------------------------------------------
-### OUTPUTTER *neoquickrun-module-outputter*
+------------
+### Outputter *neoquickrun-module-outputter*
 
 Outputter is a module to output execution results.
 The following outputters are available:
 
-*neoquickrun-module-outputter/buffer*
-
-**outputter/buffer**
+---------------
+#### outputter/buffer *neoquickrun-module-outputter/buffer*
 
 Opens output buffer and displays results.
 If output buffer exists, reuses it.
@@ -686,24 +745,21 @@ Options:
 - `outputter/buffer/running_mark` - Display while running (default: `'running...'`)
 - `outputter/buffer/close_on_empty` - Close if empty (default: `0`)
 
-*neoquickrun-module-outputter/message*
-
-**outputter/message**
+---------------
+#### outputter/message *neoquickrun-module-outputter/message*
 
 Outputs on |messages|.
 
 Options:
 - `outputter/message/log` - Output to |message-history| (default: `0`)
 
-*neoquickrun-module-outputter/null*
-
-**outputter/null**
+---------------
+#### outputter/null *neoquickrun-module-outputter/null*
 
 No output. Discards all results.
 
-*neoquickrun-module-outputter/quickfix*
-
-**outputter/quickfix**
+---------------
+#### outputter/quickfix *neoquickrun-module-outputter/quickfix*
 
 Outputs to |quickfix| list.
 
@@ -712,9 +768,8 @@ Options:
 - `outputter/quickfix/open_cmd` - Command to open quickfix (default: `"copen"`)
 - `outputter/quickfix/into` - Move cursor to quickfix (default: `0`)
 
-*neoquickrun-module-outputter/loclist*
-
-**outputter/loclist**
+---------------
+#### outputter/loclist *neoquickrun-module-outputter/loclist*
 
 Outputs to |location-list|.
 
@@ -723,9 +778,8 @@ Options:
 - `outputter/loclist/open_cmd` - Command to open loclist (default: `"lopen"`)
 - `outputter/loclist/into` - Move cursor to loclist (default: `0`)
 
-*neoquickrun-module-outputter/file*
-
-**outputter/file**
+---------------
+#### outputter/file *neoquickrun-module-outputter/file*
 
 Outputs to a file.
 
@@ -733,9 +787,8 @@ Options:
 - `outputter/file/name` - Filename (required)
 - `outputter/file/append` - Append to file (default: `0`)
 
-*neoquickrun-module-outputter/variable*
-
-**outputter/variable**
+---------------
+#### outputter/variable *neoquickrun-module-outputter/variable*
 
 Outputs to a Vim variable, environment variable, or option.
 
@@ -743,9 +796,8 @@ Options:
 - `outputter/variable/name` - Variable name (required)
 - `outputter/variable/append` - Append (default: `0`)
 
-*neoquickrun-module-outputter/multi*
-
-**outputter/multi**
+---------------
+#### outputter/multi *neoquickrun-module-outputter/multi*
 
 Outputs to multiple outputters simultaneously.
 
@@ -753,22 +805,19 @@ Options:
 - `outputter/multi/targets` - List of outputter names (default: `[]`)
 
 Example:
-```vim
-:NeoQuickRun -outputter multi -outputter/multi/targets ['buffer', 'file']
-```
-
-*neoquickrun-module-outputter/buffered*
-
-**outputter/buffered**
+>vim
+  :NeoQuickRun -outputter multi -outputter/multi/targets ['buffer', 'file']
+<
+---------------
+#### outputter/buffered *neoquickrun-module-outputter/buffered*
 
 Buffers output and shows whole result at once.
 
 Options:
 - `outputter/buffered/target` - Target outputter name (default: `''`)
 
-*neoquickrun-module-outputter/error*
-
-**outputter/error**
+---------------
+#### outputter/error *neoquickrun-module-outputter/error*
 
 Switches outputter based on exit status (0 = success).
 
@@ -776,9 +825,8 @@ Options:
 - `outputter/error/success` - Outputter for success (default: `"null"`)
 - `outputter/error/error` - Outputter for failure (default: `"null"`)
 
-*neoquickrun-module-outputter/browser*
-
-**outputter/browser**
+---------------
+#### outputter/browser *neoquickrun-module-outputter/browser*
 
 Opens output in browser.
 Requires open-browser.vim plugin.
@@ -787,29 +835,28 @@ Options:
 - `outputter/browser/name` - Filename (default: `tempname() . '.html'`)
 - `outputter/browser/append` - Append (default: `0`)
 
-*neoquickrun-module-outputter/popup*
-
-**outputter/popup**
+---------------
+#### outputter/popup *neoquickrun-module-outputter/popup*
 
 Outputs to popup window (Vim 8.2+).
 Highly experimental.
 
-*neoquickrun-module-outputter/float*
+---------------
+#### outputter/float *neoquickrun-module-outputter/float*
 
-**outputter/float**
+(Neovim only)
 
-Outputs to floating window (Neovim only).
+Outputs to floating window.
 Modern alternative to popup for Neovim users.
 
-------------------------------------------------------------------------------
-### HOOK *neoquickrun-module-hook*
+==================
+## Hook *neoquickrun-module-hook*
 
 Hook is a module to perform additional processing at specific points.
 The following hooks are available:
 
-*neoquickrun-module-hook/cd*
-
-**hook/cd**
+------------
+### hook/cd *neoquickrun-module-hook/cd*
 
 Executes in specified directory.
 
@@ -819,9 +866,8 @@ Options:
 Note: Changes current directory and tries to restore.
 May cause issues with asynchronous execution.
 
-*neoquickrun-module-hook/eval*
-
-**hook/eval**
+------------
+### hook/eval *neoquickrun-module-hook/eval*
 
 Changes source content by template.
 
@@ -834,9 +880,8 @@ Options:
 - `hook/eval/template` - Template string (default: `""`)
     - `%s` is replaced by original source (like |printf()|)
 
-*neoquickrun-module-hook/output_encode*
-
-**hook/output_encode**
+------------
+### hook/output_encode *neoquickrun-module-hook/output_encode*
 
 Converts encoding and end-of-line of output.
 
@@ -845,16 +890,14 @@ Options:
     - `:to` is omittable (defaults to `&encoding`)
 - `hook/output_encode/fileformat` - End-of-line format: "unix", "dos", or "mac" (default: `""`)
 
-*neoquickrun-module-hook/shebang*
-
-**hook/shebang**
+------------
+### hook/shebang *neoquickrun-module-hook/shebang*
 
 Searches `#!` in source file head and treats following text as command.
 Converts `%c` in exec to `%C`.
 
-*neoquickrun-module-hook/sweep*
-
-**hook/sweep**
+------------
+### hook/sweep *neoquickrun-module-hook/sweep*
 
 Removes temporary files at session end.
 
@@ -878,119 +921,109 @@ Options:
 Note: Includes quickrun overhead, not exact program time.
 
 ==================
-## HOOK *neoquickrun-hook*
+## Hook *neoquickrun-hook*
 
 You can execute Vim script at specific execution points using hooks.
 
-------------------------------------------------------------------------------
-### HOOK POINTS *neoquickrun-hook-points*
+------------
+### Hook Points *neoquickrun-hook-points*
 
-*neoquickrun-hook-point-normalized*
-
-**normalized**
+---------------
+#### normalized *neoquickrun-hook-point-normalized*
 
 After config is normalized and before runner/outputter are loaded.
 
-*neoquickrun-hook-point-ready*
-
-**ready**
+---------------
+#### ready *neoquickrun-hook-point-ready*
 
 After all options are set and before first command execution.
 
-*neoquickrun-hook-point-output*
-
-**output**
+---------------
+#### output *neoquickrun-hook-point-output*
 
 When output is received from runner, before passing to outputter.
 
 Context: `data` (output data)
 
-*neoquickrun-hook-point-success*
-
-**success**
+---------------
+#### success *neoquickrun-hook-point-success*
 
 When execution succeeded (exit code 0).
 
-*neoquickrun-hook-point-failure*
-
-**failure**
+---------------
+#### failure *neoquickrun-hook-point-failure*
 
 When execution failed (non-zero exit code).
 
 Context: `exit_code`
 
-*neoquickrun-hook-point-finish*
-
-**finish**
+---------------
+#### finish *neoquickrun-hook-point-finish*
 
 After execution finished (invoked after success/failure).
 
-*neoquickrun-hook-point-exit*
-
-**exit**
+---------------
+#### exit *neoquickrun-hook-point-exit*
 
 After all post-processing finished.
 
 ==================
-## SETTING EXAMPLES *neoquickrun-examples*
+## Setting Examples *neoquickrun-setting-examples*
 
+------------
 ### Convert Markdown to HTML with Pandoc
 
 Requires: open-browser.vim
-
-```vim
-let g:neoquickrun_config = {}
-let g:neoquickrun_config.markdown = {
-\   'type': 'markdown/pandoc',
-\   'command': 'pandoc',
-\   'cmdopt': '-s',
-\   'outputter': 'browser'
-\ }
-```
-
+>vim
+  let g:neoquickrun_config.markdown = {
+    \ 'type': 'markdown/pandoc',
+    \ 'command': 'pandoc',
+    \ 'cmdopt': '-s',
+    \ 'outputter': 'browser'
+  \ }
+<
+------------
 ### Compile and Run C++
-
-```vim
-let g:neoquickrun_config.cpp = {
-\   'command': 'g++',
-\   'cmdopt': '-std=c++17',
-\   'exec': ['%c %o -o %s:r %s', '%s:r %a'],
-\   'hook/sweep/files': ['%S:r']
-\ }
-```
-
+>vim
+  let g:neoquickrun_config.cpp = {
+    \ 'command': 'g++',
+    \ 'cmdopt': '-std=c++17',
+    \ 'exec': ['%c %o -o %s:r %s', '%s:r %a'],
+    \ 'hook/sweep/files': ['%S:r']
+  \ }
+<
+------------
 ### Run Python with Time Measurement
-
-```vim
-let g:neoquickrun_config.python = {
-\   'command': 'python3',
-\   'cmdopt': '-u',
-\   'hooks': ['time']
-\ }
-```
-
+>vim
+  let g:neoquickrun_config.python = {
+    \ 'command': 'python3',
+    \ 'cmdopt': '-u',
+    \ 'hooks': ['time']
+  \ }
+<
+------------
 ### Use Floating Window in Neovim
-
-```vim
-let g:neoquickrun_config._ = {
-\   'outputter': 'float'
-\ }
-```
-
+>vim
+  let g:neoquickrun_config._ = {
+    \ 'outputter': 'float'
+  \ }
+<
 ==================
-## CHANGELOG *neoquickrun-changelog*
+## Changelog *neoquickrun-changelog*
 
-### 0.1.0 (2025-10-23)
+------------
+### 0.1.0 (2025-10)
 
-- Initial release as vim-neoquickrun
-- Complete rewrite in TypeScript using denops.vim
-- All features from vim-quickrun preserved
-- Added new outputter/float for Neovim
-- Removed dependencies on vimproc and python
-- Improved type safety and performance
+- Forked from original vim-quickrun
+- For future updates, please refer to:
+  - https://github.com/aiya000/vim-neoquickrun/commits/master/
 
-For vim-quickrun changelog, see:
-https://github.com/thinca/vim-quickrun
+Commits follows Conventional Commits.
+Please pay attention to commits containing `BREAKING CHANGE`, such as
+`change!` or `feat!`.
+
+I recommend using a package manager that shows commit messages
+during updates (like lazy.nvim).
 
 ==================
 vim:tw=78:ts=2:ft=help:norl:et:fen:fdl=0:

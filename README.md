@@ -45,6 +45,28 @@ call dein#add('vim-denops/denops.vim')
 call dein#add('aiya000/vim-neoquickrun')
 ```
 
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  'aiya00/neoquickrun.vim',
+  -- (optional)
+  init = function() -- Use `init` instead of `config` if you want to configure
+    -- Configuration for neoquickrun.vim (optional)
+    vim.g.neoquickrun_config = {
+      _ = {
+        runner = 'job',
+        outputter = 'buffer',
+      },
+      python = {
+        command = 'python3',
+        exec = '%c %o %s %a',
+      },
+      -- ...
+    }
+  end,
+}```
+
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
@@ -93,23 +115,46 @@ nmap <Leader>o <Plug>(neoquickrun-op)
 
 ### Configuration Example
 
+**Vim:**
+
 ```vim
 let g:neoquickrun_config = {
-\   '_': {
-\     'runner': 'job',
-\     'outputter': 'buffer',
-\   },
-\   'python': {
-\     'command': 'python3',
-\     'exec': '%c %o %s %a',
-\   },
-\   'javascript': {
-\     'command': 'node',
-\   },
-\   'rust': {
-\     'exec': ['cargo build', 'cargo run'],
-\   },
+  \ '_': {
+    \ 'runner': 'job',
+    \ 'outputter': 'buffer',
+  \ },
+  \ 'python': {
+    \ 'command': 'python3',
+    \ 'exec': '%c %o %s %a',
+  \ },
+  \ 'javascript': {
+    \ 'command': 'node',
+  \ },
+  \ 'rust': {
+    \ 'exec': ['cargo build', 'cargo run'],
+  \ },
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.g.neoquickrun_config = {
+  _ = {
+    runner = 'job',
+    outputter = 'buffer',
+  },
+  python = {
+    command = 'python3',
+    exec = '%c %o %s %a',
+  },
+  javascript = {
+    command = 'node',
+  },
+  rust = {
+    exec = { 'cargo build', 'cargo run' },
+  },
+}
 ```
 
 ---
@@ -158,14 +203,14 @@ The float outputter displays results in a Neovim floating window:
 
 ```vim
 let g:neoquickrun_config = {
-\   'python': {
-\     'outputter': 'float',
-\     'outputter/float/width': 80,
-\     'outputter/float/height': 20,
-\     'outputter/float/row': 5,
-\     'outputter/float/col': 10,
-\     'outputter/float/border': 'rounded',
-\   },
+  \ 'python': {
+    \ 'outputter': 'float',
+    \ 'outputter/float/width': 80,
+    \ 'outputter/float/height': 20,
+    \ 'outputter/float/row': 5,
+    \ 'outputter/float/col': 10,
+    \ 'outputter/float/border': 'rounded',
+  \ },
 \ }
 ```
 
@@ -184,14 +229,28 @@ let g:neoquickrun_config = {
 
 ### Example: Using Hooks
 
+**Vim:**
+
 ```vim
 let g:neoquickrun_config = {
-\   'python': {
-\     'hooks': ['time', 'cd'],
-\     'hook/cd/directory': '%:p:h',
-\     'hook/time/enable': 1,
-\   },
+  \ 'python': {
+    \ 'hooks': ['time', 'cd'],
+    \ 'hook/cd/directory': '%:p:h',
+    \ 'hook/time/enable': 1,
+  \ },
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.g.neoquickrun_config = {
+  python = {
+    hooks = { 'time', 'cd' },
+    ['hook/cd/directory'] = '%:p:h',
+    ['hook/time/enable'] = 1,
+  },
+}
 ```
 
 ---
@@ -200,21 +259,44 @@ let g:neoquickrun_config = {
 
 ### Global Configuration
 
+**Vim:**
+
 ```vim
 let g:neoquickrun_config = {
-\   '_': {
-\     'runner': 'job',
-\     'outputter': 'buffer',
-\   },
+  \ '_': {
+    \ 'runner': 'job',
+    \ 'outputter': 'buffer',
+  \ },
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.g.neoquickrun_config = {
+  _ = {
+    runner = 'job',
+    outputter = 'buffer',
+  },
+}
 ```
 
 ### Buffer-Local Configuration
 
+**Vim:**
+
 ```vim
 let b:neoquickrun_config = {
-\   'runner': 'terminal',
+  \ 'runner': 'terminal',
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.b.neoquickrun_config = {
+  runner = 'terminal',
+}
 ```
 
 ### Command-Line Options
@@ -235,25 +317,52 @@ let b:neoquickrun_config = {
 
 ### Execute and Open in Browser
 
+**Vim:**
+
 ```vim
 let g:neoquickrun_config = {
-\   'markdown': {
-\     'command': 'pandoc',
-\     'cmdopt': '-s',
-\     'exec': '%c %o %s -o %s:r.html',
-\     'outputter': 'browser',
-\   },
+  \ 'markdown': {
+    \ 'command': 'pandoc',
+    \ 'cmdopt': '-s',
+    \ 'exec': '%c %o %s -o %s:r.html',
+    \ 'outputter': 'browser',
+  \ },
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.g.neoquickrun_config = {
+  markdown = {
+    command = 'pandoc',
+    cmdopt = '-s',
+    exec = '%c %o %s -o %s:r.html',
+    outputter = 'browser',
+  },
+}
 ```
 
 ### Multi-Step Execution
 
+**Vim:**
+
 ```vim
 let g:neoquickrun_config = {
-\   'cpp': {
-\     'exec': ['g++ -o %s:r %s', './%s:r'],
-\   },
+  \ 'cpp': {
+    \ 'exec': ['g++ -o %s:r %s', './%s:r'],
+  \ },
 \ }
+```
+
+**Neovim:**
+
+```lua
+vim.g.neoquickrun_config = {
+  cpp = {
+    exec = { 'g++ -o %s:r %s', './%s:r' },
+  },
+}
 ```
 
 ---
@@ -276,6 +385,11 @@ The following features were removed for simplicity:
 - Session management functions (`quickrun#session#*()`)
 - Legacy runners: `runner/vimproc`, `runner/python`, `runner/concurrent_process`
 - Legacy outputter: `outputter/buffer_legacy`
+
+> [!NOTE]
+> These features might be restored in the future if the plugin gains more users:
+> - `quickrun#module#register()`
+> - `quickrun#session#*()`
 
 ---
 
@@ -329,3 +443,10 @@ Special thanks to the original author for creating such a useful plugin.
 - [vim-quickrun (original)](https://github.com/thinca/vim-quickrun)
 - [denops.vim](https://github.com/vim-denops/denops.vim)
 - [Deno](https://deno.land/)
+
+---
+
+💙 **Enjoying vim-neoquickrun?**  
+Show your support with a ⭐ on GitHub!
+
+**Happy coding with Vim/Neovim!** ⚡✨
