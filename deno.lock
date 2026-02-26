@@ -1,0 +1,11 @@
+{
+  "version": "5",
+  "remote": {
+    "https://deno.land/x/denops_std@v6.5.0/variable/environment.ts": "41c5905e43ab581f80891c8702272898f2399830b817be5774280d0d79b36225",
+    "https://deno.land/x/denops_std@v6.5.0/variable/mod.ts": "b247a9153211f1fd1eaaadf35efc3b0f7dd16ed57eb2a8137419138934a2fec5",
+    "https://deno.land/x/denops_std@v6.5.0/variable/option.ts": "225849cf8c4a63bae1831865b5b1f926f06b9f6c130d2a07e5b18e5074000792",
+    "https://deno.land/x/denops_std@v6.5.0/variable/register.ts": "fcf0634a1d5ebc28371a8ec42976d964b751bbf1a0a543b5239caeb6e3c158e4",
+    "https://deno.land/x/denops_std@v6.5.0/variable/types.ts": "06d4434fae537da58be56f94a7dcfd7eabe129d2be674ef711fda605373639c0",
+    "https://deno.land/x/denops_std@v6.5.0/variable/variable.ts": "a80d1ed2b654e2683d86b02c6e40e4d86428aab8a85ca62f68845be0724e04d3"
+  }
+}
