@@ -13,7 +13,7 @@ import {
   updateConfig,
 } from './session.ts'
 import { createMockDenops } from './utils/mock_denops.ts'
-import type { Runner, Outputter, ExecutionContext, ExecutionResult } from './types.ts'
+import type { Runner, Outputter, ExecutionResult } from './types.ts'
 
 const createMockRunner = (): Runner => ({
   name: 'mock',

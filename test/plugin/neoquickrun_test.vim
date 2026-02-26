@@ -15,15 +15,15 @@ endfunction
 
 " Test key mappings are defined
 function! s:suite.plug_neoquickrun_op_is_defined() abort
-  call s:assert.true(hasmapto('<Plug>(neoquickrun-op)', 'n'))
+  call s:assert.true(maparg('<Plug>(neoquickrun-op)', 'n') !=# '')
 endfunction
 
 function! s:suite.plug_neoquickrun_normal_is_defined() abort
-  call s:assert.true(hasmapto('<Plug>(neoquickrun)', 'n'))
+  call s:assert.true(maparg('<Plug>(neoquickrun)', 'n') !=# '')
 endfunction
 
 function! s:suite.plug_neoquickrun_visual_is_defined() abort
-  call s:assert.true(hasmapto('<Plug>(neoquickrun)', 'v'))
+  call s:assert.true(maparg('<Plug>(neoquickrun)', 'v') !=# '')
 endfunction
 
 " Test that loading plugin twice does not cause errors

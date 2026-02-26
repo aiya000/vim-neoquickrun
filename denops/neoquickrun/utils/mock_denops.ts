@@ -18,9 +18,6 @@ export type MockDenopsOptions = {
  * Create a minimal mock Denops instance for testing
  */
 export const createMockDenops = (options: MockDenopsOptions = {}): Denops => {
-  const calls: Array<{ fn: string; args: unknown[] }> = []
-  const cmds: string[] = []
-
   return {
     name: 'neoquickrun',
     meta: {
@@ -32,7 +29,6 @@ export const createMockDenops = (options: MockDenopsOptions = {}): Denops => {
     context: {},
     interrupted: undefined,
     call: async (fn: string, ...args: unknown[]) => {
-      calls.push({ fn, args })
       if (options.callHandler) {
         return await options.callHandler(fn, ...args)
       }
@@ -42,7 +38,6 @@ export const createMockDenops = (options: MockDenopsOptions = {}): Denops => {
       return []
     },
     cmd: async (cmd: string, _ctx?: unknown) => {
-      cmds.push(cmd)
       if (options.cmdHandler) {
         return await options.cmdHandler(cmd)
       }

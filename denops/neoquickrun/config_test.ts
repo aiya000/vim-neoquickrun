@@ -11,6 +11,10 @@ import {
   getModuleOption,
 } from './config.ts'
 
+/** Returns the expected shell-quoted form of a path for the current OS. */
+const quoted = (path: string): string =>
+  Deno.build.os === 'windows' ? `"${path}"` : `'${path}'`
+
 Deno.test('DEFAULT_CONFIG - has expected defaults', () => {
   assertEquals(DEFAULT_CONFIG.outputter, 'buffer')
   assertEquals(DEFAULT_CONFIG.runner, 'job')
@@ -41,8 +45,7 @@ Deno.test('expandExecFormat - expands %o as empty when cmdopt missing', () => {
 
 Deno.test('expandExecFormat - expands %s with escaped srcfile', () => {
   const result = expandExecFormat('%s', {}, '/tmp/my file.py')
-  // On non-Windows, file should be single-quoted
-  assertEquals(result, "'/tmp/my file.py'")
+  assertEquals(result, quoted('/tmp/my file.py'))
 })
 
 Deno.test('expandExecFormat - expands %S with unescaped srcfile', () => {
@@ -71,13 +74,13 @@ Deno.test('expandExecFormat - full format string', () => {
     cmdopt: '-u',
     args: 'input.txt',
   }, '/tmp/script.py')
-  assertEquals(result, "python -u '/tmp/script.py' input.txt")
+  assertEquals(result, `python -u ${quoted('/tmp/script.py')} input.txt`)
 })
 
 Deno.test('buildCommands - returns commands from string exec', () => {
   const config = { command: 'python', exec: '%c %s' }
   const result = buildCommands(config, '/tmp/file.py')
-  assertEquals(result, ["python '/tmp/file.py'"])
+  assertEquals(result, [`python ${quoted('/tmp/file.py')}`])
 })
 
 Deno.test('buildCommands - returns commands from array exec', () => {
@@ -85,7 +88,7 @@ Deno.test('buildCommands - returns commands from array exec', () => {
   const result = buildCommands(config, '/tmp/file.py')
   assertEquals(result.length, 2)
   assertEquals(result[0], 'python -c "import sys"')
-  assertEquals(result[1], "python '/tmp/file.py'")
+  assertEquals(result[1], `python ${quoted('/tmp/file.py')}`)
 })
 
 Deno.test('buildCommands - returns empty array when exec is missing', () => {
