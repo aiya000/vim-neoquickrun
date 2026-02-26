@@ -25,11 +25,13 @@ A modern, TypeScript-based reimplementation of [vim-quickrun](https://github.com
 
 ## 💡 Motivation
 
-The introduction of [denops.vim](https://github.com/vim-denops/denops.vim) made it possible to write Vim/Neovim plugins in TypeScript while maintaining full compatibility with both editors. Before denops.vim, supporting both Vim and Neovim required writing legacy Vimscript that prioritized backward compatibility — a burden that raised the maintenance cost and made contributions harder.
+[vim-quickrun](https://github.com/thinca/vim-quickrun) is an outstanding plugin that has served the Vim community brilliantly for years. Its thoughtful design and rich feature set made it a cornerstone of many developers' workflows, and it remains a true inspiration for this project.
 
-At the same time, [vim-quickrun](https://github.com/thinca/vim-quickrun) carries years of important legacy and cannot be fundamentally redesigned without breaking its established API. Rather than working around those constraints, this project takes a clean-slate approach: a ground-up reimplementation of quickrun in TypeScript, free from historical baggage and built with modern tooling.
+With the arrival of [denops.vim](https://github.com/vim-denops/denops.vim), it became possible to write Vim/Neovim plugins in TypeScript with native compatibility for both editors — something that previously required legacy Vimscript carefully written to preserve backward compatibility. That legacy made maintenance harder and raised the barrier to contribution.
 
-That is the motivation behind vim-neoquickrun.
+vim-quickrun's long history is precisely what makes it so valuable, and also what makes a ground-up redesign difficult without breaking the established API that so many users and plugins rely on. Rather than attempting to reshape it from the inside, vim-neoquickrun was born as a clean reimplementation: the same spirit, rebuilt from scratch in TypeScript with modern tooling.
+
+That is the motivation behind vim-neoquickrun — not to replace something great, but to carry its ideas forward.
 
 ---
 
