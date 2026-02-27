@@ -23,6 +23,18 @@ A modern, TypeScript-based reimplementation of [vim-quickrun](https://github.com
 
 ---
 
+## 💡 Motivation
+
+[vim-quickrun](https://github.com/thinca/vim-quickrun) is an outstanding plugin that has served the Vim community brilliantly for years. Its thoughtful design and rich feature set made it a cornerstone of many developers' workflows, and it remains a true inspiration for this project.
+
+With the arrival of [denops.vim](https://github.com/vim-denops/denops.vim), it became possible to write Vim/Neovim plugins in TypeScript with native compatibility for both editors — something that previously required legacy Vimscript carefully written to preserve backward compatibility. That legacy made maintenance harder and raised the barrier to contribution.
+
+vim-quickrun's long history is precisely what makes it so valuable, and also what makes a ground-up redesign difficult without breaking the established API that so many users and plugins rely on. Rather than attempting to reshape it from the inside, vim-neoquickrun was born as a clean reimplementation: the same spirit, rebuilt from scratch in TypeScript with modern tooling.
+
+That is the motivation behind vim-neoquickrun — not to replace something great, but to carry its ideas forward.
+
+---
+
 ## 📦 Installation
 
 ### Requirements
