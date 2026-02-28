@@ -30,6 +30,7 @@ Deno.test('shebang hook - on_normalized extracts shebang command', async () => {
 
   const result = await hook.on_normalized!(context)
   assertEquals(result.config.command, '/usr/bin/env python3')
+  assertEquals(result.config.exec, '%C %s')
 })
 
 Deno.test('shebang hook - on_normalized returns unchanged context for empty src', async () => {
