@@ -25,11 +25,21 @@ Deno.test('DEFAULT_CONFIG - has expected defaults', () => {
 
 Deno.test('expandExecFormat - expands %c with command', () => {
   const result = expandExecFormat('%c', { command: 'python' }, '/tmp/file.py')
-  assertEquals(result, 'python')
+  assertEquals(result, quoted('python'))
 })
 
 Deno.test('expandExecFormat - expands %c with type if command missing', () => {
   const result = expandExecFormat('%c', { type: 'ruby' }, '/tmp/file.rb')
+  assertEquals(result, quoted('ruby'))
+})
+
+Deno.test('expandExecFormat - expands %C with raw command', () => {
+  const result = expandExecFormat('%C', { command: 'python' }, '/tmp/file.py')
+  assertEquals(result, 'python')
+})
+
+Deno.test('expandExecFormat - expands %C with raw type if command missing', () => {
+  const result = expandExecFormat('%C', { type: 'ruby' }, '/tmp/file.rb')
   assertEquals(result, 'ruby')
 })
 
@@ -74,21 +84,21 @@ Deno.test('expandExecFormat - full format string', () => {
     cmdopt: '-u',
     args: 'input.txt',
   }, '/tmp/script.py')
-  assertEquals(result, `python -u ${quoted('/tmp/script.py')} input.txt`)
+  assertEquals(result, `${quoted('python')} -u ${quoted('/tmp/script.py')} input.txt`)
 })
 
 Deno.test('buildCommands - returns commands from string exec', () => {
   const config = { command: 'python', exec: '%c %s' }
   const result = buildCommands(config, '/tmp/file.py')
-  assertEquals(result, [`python ${quoted('/tmp/file.py')}`])
+  assertEquals(result, [`${quoted('python')} ${quoted('/tmp/file.py')}`])
 })
 
 Deno.test('buildCommands - returns commands from array exec', () => {
   const config = { command: 'python', exec: ['%c -c "import sys"', '%c %s'] }
   const result = buildCommands(config, '/tmp/file.py')
   assertEquals(result.length, 2)
-  assertEquals(result[0], 'python -c "import sys"')
-  assertEquals(result[1], `python ${quoted('/tmp/file.py')}`)
+  assertEquals(result[0], `${quoted('python')} -c "import sys"`)
+  assertEquals(result[1], `${quoted('python')} ${quoted('/tmp/file.py')}`)
 })
 
 Deno.test('buildCommands - returns empty array when exec is missing', () => {

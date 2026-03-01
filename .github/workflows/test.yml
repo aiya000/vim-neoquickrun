@@ -157,6 +157,9 @@ jobs:
         uses: 'denoland/setup-deno@v2'
         with:
           deno-version: 'v2.x'
+      - name: 'Type check'
+        run: |
+          deno task check
       - name: 'Run Deno tests'
         run: |
           deno task test

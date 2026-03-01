@@ -6,6 +6,11 @@ import assert from 'node:assert'
 const assertEquals = assert.deepStrictEqual.bind(assert)
 import { createShebangHook } from './shebang.ts'
 import { createMockContext } from '../utils/mock_denops.ts'
+import { buildCommands } from '../config.ts'
+
+/** Returns the expected shell-quoted form of a path for the current OS. */
+const quoted = (path: string): string =>
+  Deno.build.os === 'windows' ? `"${path}"` : `'${path}'`
 
 Deno.test('shebang hook - has correct name', () => {
   const hook = createShebangHook({})
@@ -31,6 +36,18 @@ Deno.test('shebang hook - on_normalized extracts shebang command', async () => {
   const result = await hook.on_normalized!(context)
   assertEquals(result.config.command, '/usr/bin/env python3')
   assertEquals(result.config.exec, '%C %s')
+})
+
+Deno.test('shebang hook - buildCommands produces correct command after hook', async () => {
+  const hook = createShebangHook({})
+  const context = createMockContext({
+    src: '#!/usr/bin/env python3\nprint("hello")',
+    config: { exec: '%c %s' },
+  })
+
+  const result = await hook.on_normalized!(context)
+  const commands = buildCommands(result.config, '/tmp/file.py')
+  assertEquals(commands, [`/usr/bin/env python3 ${quoted('/tmp/file.py')}`])
 })
 
 Deno.test('shebang hook - on_normalized returns unchanged context for empty src', async () => {
