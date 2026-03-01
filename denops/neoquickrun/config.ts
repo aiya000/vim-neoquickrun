@@ -212,7 +212,8 @@ const expandPattern = async (
 
 /**
  * Expand exec format placeholders
- * %c: command
+ * %c: command (shell escaped)
+ * %C: command (not escaped)
  * %o: cmdopt
  * %s: srcfile (escaped)
  * %S: srcfile (not escaped)
@@ -228,7 +229,8 @@ export const expandExecFormat = (
 
   // Replace placeholders
   result = result.replace(/%%/g, '\x00') // Temporary placeholder for %%
-  result = result.replace(/%c/g, config.command || config.type || '')
+  result = result.replace(/%C/g, config.command || config.type || '')
+  result = result.replace(/%c/g, escapeShell(config.command || config.type || ''))
   result = result.replace(/%o/g, config.cmdopt || '')
   result = result.replace(/%s/g, escapeShell(srcfile))
   result = result.replace(/%S/g, srcfile)

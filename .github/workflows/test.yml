@@ -1,27 +1,49 @@
 name: 'Test'
 on: ['push', 'pull_request']
 
+permissions:
+  contents: read
+
 jobs:
-  test:
+  vim-test:
     name: 'Vim ${{ matrix.vim_version }} on ${{ matrix.platform }}'
     strategy:
       matrix:
-        vim_version:
-          - 'head'
-          - 'v9.1.0000'
-          - 'v9.0.0000'
-          - 'v8.2.0000'
-          - 'v8.1.0001'
-        platform: ['Linux', 'MacOS', 'Windows']
-
         include:
-          - platform: 'Linux'
+          - vim_version: 'head'
+            platform: 'Linux'
             os: 'ubuntu-latest'
             download: 'never'
-          - platform: 'MacOS'
+          - vim_version: 'head'
+            platform: 'MacOS'
             os: 'macos-latest'
             download: 'never'
-          - platform: 'Windows'
+          - vim_version: 'head'
+            platform: 'Windows'
+            os: 'windows-latest'
+            download: 'always'
+          - vim_version: 'v9.1.0000'
+            platform: 'Linux'
+            os: 'ubuntu-latest'
+            download: 'never'
+          - vim_version: 'v9.1.0000'
+            platform: 'MacOS'
+            os: 'macos-latest'
+            download: 'never'
+          - vim_version: 'v9.1.0000'
+            platform: 'Windows'
+            os: 'windows-latest'
+            download: 'always'
+          - vim_version: 'v9.0.0000'
+            platform: 'Linux'
+            os: 'ubuntu-latest'
+            download: 'never'
+          - vim_version: 'v9.0.0000'
+            platform: 'MacOS'
+            os: 'macos-latest'
+            download: 'never'
+          - vim_version: 'v9.0.0000'
+            platform: 'Windows'
             os: 'windows-latest'
             download: 'always'
 
@@ -52,3 +74,92 @@ jobs:
           THEMIS_VIM: '${{ steps.vim.outputs.executable }}'
         run: |
           ./themis/bin/themis --reporter dot
+
+  neovim-test:
+    name: 'Neovim ${{ matrix.nvim_version }} on ${{ matrix.platform }}'
+    strategy:
+      matrix:
+        include:
+          - nvim_version: 'head'
+            platform: 'Linux'
+            os: 'ubuntu-latest'
+            download: 'never'
+          - nvim_version: 'head'
+            platform: 'MacOS'
+            os: 'macos-latest'
+            download: 'never'
+          - nvim_version: 'head'
+            platform: 'Windows'
+            os: 'windows-latest'
+            download: 'always'
+          - nvim_version: 'v0.10.0'
+            platform: 'Linux'
+            os: 'ubuntu-latest'
+            download: 'never'
+          - nvim_version: 'v0.10.0'
+            platform: 'MacOS'
+            os: 'macos-latest'
+            download: 'never'
+          - nvim_version: 'v0.10.0'
+            platform: 'Windows'
+            os: 'windows-latest'
+            download: 'always'
+          - nvim_version: 'v0.9.0'
+            platform: 'Linux'
+            os: 'ubuntu-latest'
+            download: 'never'
+          - nvim_version: 'v0.9.0'
+            platform: 'MacOS'
+            os: 'macos-latest'
+            download: 'never'
+          - nvim_version: 'v0.9.0'
+            platform: 'Windows'
+            os: 'windows-latest'
+            download: 'always'
+
+      fail-fast: false
+
+    runs-on: '${{ matrix.os }}'
+    timeout-minutes: 10
+
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: 'Setup Neovim'
+        id: 'vim'
+        uses: 'thinca/action-setup-vim@v1'
+        with:
+          vim_type: 'neovim'
+          vim_version: '${{ matrix.nvim_version }}'
+          download: '${{ matrix.download }}'
+      - name: 'Show Neovim version'
+        run: |
+          ${{ steps.vim.outputs.executable }} --version
+      - name: 'Setup themis.vim'
+        uses: 'actions/checkout@v4'
+        with:
+          repository: 'thinca/vim-themis'
+          ref: 'v1.7.0'
+          path: 'themis'
+      - name: 'Run test'
+        env:
+          THEMIS_VIM: '${{ steps.vim.outputs.executable }}'
+        run: |
+          ./themis/bin/themis --reporter dot
+
+  deno-test:
+    name: 'Deno unit tests'
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 10
+
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: 'Setup Deno'
+        uses: 'denoland/setup-deno@v2'
+        with:
+          deno-version: 'v2.x'
+      - name: 'Type check'
+        run: |
+          deno task check
+      - name: 'Run Deno tests'
+        run: |
+          deno task test
