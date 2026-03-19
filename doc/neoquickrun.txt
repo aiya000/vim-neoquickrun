@@ -687,11 +687,6 @@ This is the default runner.
 Runs by Deno's subprocess API synchronously.
 
 ---------------
-#### runner/job *neoquickrun-module-runner/job*
-
-Runs via Vim/Neovim's |job| feature asynchronously.
-
----------------
 #### runner/terminal *neoquickrun-module-runner/terminal*
 
 Runs commands in terminal window via |terminal| feature.
