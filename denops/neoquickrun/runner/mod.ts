@@ -6,6 +6,7 @@ import type { Config } from '../types.ts'
 import { registerRunner, getRunner } from './types.ts'
 import { createDenoRunner } from './deno.ts'
 import { createSystemRunner } from './system.ts'
+import { createLuaRunner } from './lua.ts'
 import { createTerminalRunner } from './terminal.ts'
 import { createShellRunner } from './shell.ts'
 import { createRemoteRunner } from './remote.ts'
@@ -19,6 +20,7 @@ export const initializeRunners = (): void => {
   registerRunner('system', async (config: Config) =>
     createSystemRunner(config)
   )
+  registerRunner('lua', async (config: Config) => createLuaRunner(config))
   registerRunner('terminal', async (config: Config) =>
     createTerminalRunner(config)
   )

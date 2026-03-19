@@ -688,6 +688,12 @@ Runs by Vim's |system()| function synchronously.
 Blocks Vim during execution.
 
 ---------------
+#### runner/lua *neoquickrun-module-runner/lua*
+
+Runs Lua code via Neovim's |nvim_exec2()| function.
+Neovim only.
+
+---------------
 #### runner/terminal *neoquickrun-module-runner/terminal*
 
 Runs commands in terminal window via |terminal| feature.
