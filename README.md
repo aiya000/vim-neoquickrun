@@ -14,7 +14,7 @@ A modern, TypeScript-based reimplementation of [vim-quickrun](https://github.com
 ## ✨ Features
 
 - **⚡ Fast Execution** - Execute code snippets and files instantly
-- **🎯 Multiple Runners** - Deno, System, Terminal, Shell, Remote, Vimscript
+- **🎯 Multiple Runners** - Deno, System, Lua, Terminal, Shell, Remote, Vimscript
 - **📤 Flexible Output** - Buffer, Quickfix, Float (Neovim), Browser, and more
 - **🪝 Extensible Hooks** - Modify behavior with pre/post execution hooks
 - **🔧 Highly Configurable** - Customize execution per filetype
@@ -177,6 +177,7 @@ vim.g.neoquickrun_config = {
 |--------|-------------|--------------|
 | **deno** | Asynchronous execution using `Deno.Command` (default) | None |
 | **system** | Synchronous execution using Vim's `system()` (blocks Vim during execution) | None |
+| **lua** | Execute Lua code via `nvim_exec2` (Neovim only) | Neovim |
 | **terminal** | Execute in terminal window | `+terminal` |
 | **shell** | Execute using `:!` command | None |
 | **remote** | Background execution using clientserver | `+clientserver` |
