@@ -14,7 +14,7 @@ A modern, TypeScript-based reimplementation of [vim-quickrun](https://github.com
 ## ✨ Features
 
 - **⚡ Fast Execution** - Execute code snippets and files instantly
-- **🎯 Multiple Runners** - System, Job, Terminal, Shell, Remote, Vimscript
+- **🎯 Multiple Runners** - Deno, System, Job, Terminal, Shell, Remote, Vimscript
 - **📤 Flexible Output** - Buffer, Quickfix, Float (Neovim), Browser, and more
 - **🪝 Extensible Hooks** - Modify behavior with pre/post execution hooks
 - **🔧 Highly Configurable** - Customize execution per filetype
@@ -67,7 +67,7 @@ call dein#add('aiya000/vim-neoquickrun')
     -- Configuration for neoquickrun.vim (optional)
     vim.g.neoquickrun_config = {
       _ = {
-        runner = 'job',
+        runner = 'deno',
         outputter = 'buffer',
       },
       python = {
@@ -103,7 +103,7 @@ Execute current buffer:
 Execute with specific runner:
 
 ```vim
-:NeoQuickRun -runner job
+:NeoQuickRun -runner deno
 ```
 
 Execute Python code:
@@ -132,7 +132,7 @@ nmap <Leader>o <Plug>(neoquickrun-op)
 ```vim
 let g:neoquickrun_config = {
   \ '_': {
-    \ 'runner': 'job',
+    \ 'runner': 'deno',
     \ 'outputter': 'buffer',
   \ },
   \ 'python': {
@@ -153,7 +153,7 @@ let g:neoquickrun_config = {
 ```lua
 vim.g.neoquickrun_config = {
   _ = {
-    runner = 'job',
+    runner = 'deno',
     outputter = 'buffer',
   },
   python = {
@@ -175,7 +175,8 @@ vim.g.neoquickrun_config = {
 
 | Runner | Description | Requirements |
 |--------|-------------|--------------|
-| **system** | Synchronous execution using `Deno.Command` | None |
+| **deno** | Asynchronous execution using `Deno.Command` (default) | Deno `--allow-run` (granted by denops) |
+| **system** | Synchronous execution using `Deno.Command` | Deno `--allow-run` (granted by denops) |
 | **job** | Asynchronous execution using Vim's job feature | `+job` |
 | **terminal** | Execute in terminal window | `+terminal` |
 | **shell** | Execute using `:!` command | None |
@@ -276,7 +277,7 @@ vim.g.neoquickrun_config = {
 ```vim
 let g:neoquickrun_config = {
   \ '_': {
-    \ 'runner': 'job',
+    \ 'runner': 'deno',
     \ 'outputter': 'buffer',
   \ },
 \ }
@@ -287,7 +288,7 @@ let g:neoquickrun_config = {
 ```lua
 vim.g.neoquickrun_config = {
   _ = {
-    runner = 'job',
+    runner = 'deno',
     outputter = 'buffer',
   },
 }
@@ -314,7 +315,7 @@ vim.b.neoquickrun_config = {
 ### Command-Line Options
 
 ```vim
-:NeoQuickRun -runner job -outputter quickfix
+:NeoQuickRun -runner deno -outputter quickfix
 ```
 
 ---

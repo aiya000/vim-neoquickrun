@@ -3,7 +3,8 @@
  */
 
 import type { Config } from '../types.ts'
-import { registerRunner, getRunner } from './types.ts'
+import { registerRunner } from './types.ts'
+import { createDenoRunner } from './deno.ts'
 import { createSystemRunner } from './system.ts'
 import { createJobRunner } from './job.ts'
 import { createTerminalRunner } from './terminal.ts'
@@ -15,6 +16,7 @@ import { createVimscriptRunner } from './vimscript.ts'
  * Initialize all runners
  */
 export const initializeRunners = (): void => {
+  registerRunner('deno', async (config: Config) => createDenoRunner(config))
   registerRunner('system', async (config: Config) =>
     createSystemRunner(config)
   )

@@ -13,7 +13,7 @@ import { deepMerge, merge } from './utils/functional.ts'
  */
 export const DEFAULT_CONFIG: Config = {
   outputter: 'buffer',
-  runner: 'job',
+  runner: 'deno',
   cmdopt: '',
   args: '',
   tempfile: '%{tempname()}',
