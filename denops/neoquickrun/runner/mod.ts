@@ -3,7 +3,7 @@
  */
 
 import type { Config } from '../types.ts'
-import { registerRunner, getRunner } from './types.ts'
+import { registerRunner } from './types.ts'
 import { createDenoRunner } from './deno.ts'
 import { createSystemRunner } from './system.ts'
 import { createJobRunner } from './job.ts'
