@@ -684,7 +684,8 @@ This is the default runner.
 ---------------
 #### runner/system *neoquickrun-module-runner/system*
 
-Runs by Deno's subprocess API synchronously.
+Runs by Vim's |system()| function synchronously.
+Blocks Vim during execution.
 
 ---------------
 #### runner/terminal *neoquickrun-module-runner/terminal*

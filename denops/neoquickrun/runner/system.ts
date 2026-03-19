@@ -1,5 +1,5 @@
 /**
- * System runner - execute commands synchronously using Deno.Command
+ * System runner - execute commands synchronously using Vim's system()
  */
 
 import type { Config, ExecutionContext, ExecutionResult, Runner } from '../types.ts'
@@ -12,10 +12,10 @@ export const createSystemRunner = (_config: Config): Runner => {
   return {
     name: 'system',
     validate: async (_denops: Denops) => {
-      // System runner is always available
+      // System runner is available on both Vim and Neovim
     },
     run: async (
-      _context: ExecutionContext,
+      context: ExecutionContext,
       commands: readonly string[],
       input: string
     ): Promise<ExecutionResult> => {
@@ -23,7 +23,7 @@ export const createSystemRunner = (_config: Config): Runner => {
       let exitCode = 0
 
       for (const command of commands) {
-        const result = await executeCommand(command, input)
+        const result = await executeCommand(context.denops, command, input)
         output += result.output
         exitCode = result.exitCode
 
@@ -46,112 +46,21 @@ export const createSystemRunner = (_config: Config): Runner => {
 }
 
 /**
- * Execute a single command
+ * Execute a single command using Vim's system()
  */
 const executeCommand = async (
+  denops: Denops,
   command: string,
   input: string
 ): Promise<{ output: string; exitCode: number }> => {
   try {
-    // Parse command and arguments
-    const args = parseCommand(command)
-    if (args.length === 0) {
-      return { output: '', exitCode: 1 }
-    }
-
-    const cmd = args[0]
-    const cmdArgs = args.slice(1)
-
-    // Create command
-    const process = new Deno.Command(cmd, {
-      args: cmdArgs,
-      stdin: 'piped',
-      stdout: 'piped',
-      stderr: 'piped',
-    })
-
-    // Spawn process
-    const child = process.spawn()
-
-    // Write input to stdin
-    const writer = child.stdin.getWriter()
-    await writer.write(new TextEncoder().encode(input))
-    await writer.close()
-
-    // Wait for completion
-    const { code, stdout, stderr } = await child.output()
-
-    // Combine stdout and stderr
-    const outputText = new TextDecoder().decode(stdout)
-    const errorText = new TextDecoder().decode(stderr)
-    const output = outputText + errorText
-
-    return {
-      output,
-      exitCode: code,
-    }
+    const output = (await denops.call('system', command, input)) as string
+    const exitCode = (await denops.eval('v:shell_error')) as number
+    return { output, exitCode }
   } catch (error) {
     return {
       output: `Error executing command: ${error}`,
       exitCode: 1,
     }
   }
-}
-
-/**
- * Parse command string into command and arguments
- * Simple shell-like parsing
- */
-const parseCommand = (command: string): string[] => {
-  const args: string[] = []
-  let current = ''
-  let inQuote: "'" | '"' | null = null
-  let escaped = false
-
-  for (let i = 0; i < command.length; i++) {
-    const char = command[i]
-
-    if (!char) continue
-
-    if (escaped) {
-      current += char
-      escaped = false
-      continue
-    }
-
-    if (char === '\\') {
-      escaped = true
-      continue
-    }
-
-    if (inQuote) {
-      if (char === inQuote) {
-        inQuote = null
-      } else {
-        current += char
-      }
-      continue
-    }
-
-    if (char === "'" || char === '"') {
-      inQuote = char
-      continue
-    }
-
-    if (char === ' ' || char === '\t') {
-      if (current) {
-        args.push(current)
-        current = ''
-      }
-      continue
-    }
-
-    current += char
-  }
-
-  if (current) {
-    args.push(current)
-  }
-
-  return args
 }

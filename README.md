@@ -176,7 +176,7 @@ vim.g.neoquickrun_config = {
 | Runner | Description | Requirements |
 |--------|-------------|--------------|
 | **deno** | Asynchronous execution using `Deno.Command` (default) | None |
-| **system** | Synchronous execution using `Deno.Command` | None |
+| **system** | Synchronous execution using Vim's `system()` (blocks Vim during execution) | None |
 | **terminal** | Execute in terminal window | `+terminal` |
 | **shell** | Execute using `:!` command | None |
 | **remote** | Background execution using clientserver | `+clientserver` |
