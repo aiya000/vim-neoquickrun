@@ -54,7 +54,7 @@ export const main = (denops: Denops): void => {
         let context = createContext(denops, config, src, srcfile)
 
         // Get runner, outputter, and hooks
-        const runnerName = config.runner || 'job'
+        const runnerName = config.runner || 'deno'
         const outputterName = config.outputter || 'buffer'
 
         const runner = await getRunner(runnerName, config)

@@ -132,7 +132,7 @@ You can override these defaults in your .vimrc:
 >vim
   let g:neoquickrun_config = {
     \ '_': {
-      \ 'runner': 'job',
+      \ 'runner': 'deno',
       \ 'outputter': 'buffer',
       \ 'exec': '%c %o %s %a',
       \ 'tempfile': '%{tempname()}',
@@ -181,7 +181,7 @@ For Neovim users, you can configure vim-neoquickrun using Lua:
 >lua
   vim.g.neoquickrun_config = {
     _ = {
-      runner = 'job',
+      runner = 'deno',
       outputter = 'buffer',
       exec = '%c %o %s %a',
       tempfile = '%{tempname()}',
@@ -465,7 +465,7 @@ Example:
   " Use system runner
   :NeoQuickRun -runner system
 <
-Default: `'job'`
+Default: `'deno'`
 
 ------------
 ### *neoquickrun-option-hooks*
@@ -612,7 +612,7 @@ Example:
 >vim
   let g:neoquickrun_config = {
     \ '_': {
-      \ 'runner': 'job',
+      \ 'runner': 'deno',
       \ 'outputter': 'buffer',
     \ },
     \ 'python': {
@@ -676,6 +676,12 @@ Runner is a module to execute programs.
 The following runners are available:
 
 ---------------
+#### runner/deno *neoquickrun-module-runner/deno*
+
+Runs by Deno's |Deno.Command| API asynchronously.
+This is the default runner.
+
+---------------
 #### runner/system *neoquickrun-module-runner/system*
 
 Runs by Deno's subprocess API synchronously.
@@ -684,7 +690,6 @@ Runs by Deno's subprocess API synchronously.
 #### runner/job *neoquickrun-module-runner/job*
 
 Runs via Vim/Neovim's |job| feature asynchronously.
-This is the default runner.
 
 ---------------
 #### runner/terminal *neoquickrun-module-runner/terminal*
