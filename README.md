@@ -175,8 +175,8 @@ vim.g.neoquickrun_config = {
 
 | Runner | Description | Requirements |
 |--------|-------------|--------------|
-| **deno** | Asynchronous execution using `Deno.Command` (default) | None |
-| **system** | Synchronous execution using `Deno.Command` | None |
+| **deno** | Asynchronous execution using `Deno.Command` (default) | Deno `--allow-run` (granted by denops) |
+| **system** | Synchronous execution using `Deno.Command` | Deno `--allow-run` (granted by denops) |
 | **job** | Asynchronous execution using Vim's job feature | `+job` |
 | **terminal** | Execute in terminal window | `+terminal` |
 | **shell** | Execute using `:!` command | None |
